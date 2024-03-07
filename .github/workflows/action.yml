@@ -24,6 +24,7 @@ jobs:
         with:
           root_file: apssamp.tex
           working_directory: paper
+          post_compile: "latexmk -c && mv apssamp.pdf .."
       - name: Commit PDF file
         run: |
           git config --global user.name 'Ising-B'
