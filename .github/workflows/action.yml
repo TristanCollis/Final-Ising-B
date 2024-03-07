@@ -34,6 +34,7 @@ jobs:
           git commit -am "Automated commit"
           git push
       - name: Upload PDF file
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: PDF
