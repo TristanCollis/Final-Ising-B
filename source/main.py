@@ -3,18 +3,17 @@ from configparser import ConfigParser
 import numpy as np
 
 from source.constants.constants import T_critical
-from source.helpers.helpers import mcmc_full
+from source.helpers.helpers import mcmc_full, get_config_section
 
 
 def main():
     config_path = "./config.ini"
-    config = ConfigParser()
-    config.read(config_path)
+    config = get_config_section(config_path)
 
-    lattice_size = int(config["DEFAULT"]["lattice_size"])
-    burn_in_steps = int(config["DEFAULT"]["burn_in_steps"])
-    total_steps = int(config["DEFAULT"]["total_steps"])
-    samples = int(config["DEFAULT"]["samples"])
+    lattice_size = int(config["lattice_size"])
+    burn_in_steps = int(config["burn_in_steps"])
+    total_steps = int(config["total_steps"])
+    samples = int(config["samples"])
 
     lattice = np.ones((lattice_size, lattice_size), dtype=int)
     magnetization_history = np.empty((samples, samples, total_steps), dtype=float)

@@ -1,5 +1,13 @@
 import numpy as np
 from custom_types import ndarray
+from configparser import ConfigParser, SectionProxy
+
+
+def get_config_section(config_path: str, section: str = "DEFAULT") -> SectionProxy:
+    config = ConfigParser()
+    config.read(config_path)
+
+    return config[section]
 
 
 def magnetization(lattice: ndarray[int]) -> float: ...
