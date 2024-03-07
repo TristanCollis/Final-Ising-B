@@ -20,6 +20,7 @@ jobs:
           working_directory: paper
           post_compile: "latexmk -c && mv apssamp.pdf ../paper.pdf"
       - name: Push PDF file
+        continue-on-error: true
         run: |
           git config --global user.name 'Ising-B'
           git config --global user.email '35210313+Yariazen@useres.noreply.github.com'
@@ -28,7 +29,6 @@ jobs:
           git commit -am "Automated commit"
           git push
       - name: Upload PDF file
-        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: PDF
