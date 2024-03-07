@@ -49,7 +49,7 @@ def run_simulation(size, temperature, steps, spin_grid, b_field):
         
         magnetism.append(calculate_magnetism(spin_grid))
         energies.append(calculate_energy(spin_grid, b_field))
-    return spin_grid, energies, magnetism, spin_configs
+    return spin_grid, energies, magnetism
 
 # Function to calculate net magnetism per generation
 @jit(nopython=True)
