@@ -25,10 +25,12 @@ jobs:
           root_file: apssamp.tex
           working_directory: paper
           post_compile: "latexmk -c && mv apssamp.pdf .."
-      - name: Commit PDF file
+      - name: Push PDF file
         run: |
           git config --global user.name 'Ising-B'
           git config --global user.email '35210313+Yariazen@useres.noreply.github.com'
+          git add apssamp.pdf
+          git clean -f
           git commit -am "Automated commit"
           git push
       - name: Upload PDF file
