@@ -13,6 +13,14 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+        uses: actions/checkout@v3
+        if: github.event_name == 'push'
+        with:
+          fetch-depth: 0
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         with:
