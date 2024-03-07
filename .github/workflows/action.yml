@@ -24,9 +24,15 @@ jobs:
         with:
           root_file: apssamp.tex
           working_directory: paper
+      - name: Commit PDF file
+        run: |
+          git config --global user.name 'Ising-B'
+          git config --global user.email '35210313+Yariazen@useres.noreply.github.com'
+          git commit -am "Automated commit"
+          git push
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: apssamp.pdf
+          path: paper/apssamp.pdf
           
