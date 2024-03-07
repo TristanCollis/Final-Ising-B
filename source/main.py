@@ -19,8 +19,8 @@ def main():
     lattice = np.ones((lattice_size, lattice_size), dtype=int)
     magnetization_history = np.empty((samples, samples, total_steps), dtype=float)
 
-    for t, T in enumerate(np.linspace(T_critical / 2, T_critical * 1.5, num=3)):
-        for b, B in enumerate(np.linspace(-1, 1, num=3)):
+    for t, T in enumerate(np.linspace(T_critical / 2, T_critical * 1.5, num=samples)):
+        for b, B in enumerate(np.linspace(-1, 1, num=samples)):
             magnetization_history[t, b] = mcmc_full(
                 lattice=lattice, temperature=T, b_field=B, total_steps=total_steps
             )
