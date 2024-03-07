@@ -24,7 +24,7 @@ jobs:
         with:
           root_file: apssamp.tex
           working_directory: paper
-          post_compile: "latexmk -c && mv apssamp.pdf .."
+          post_compile: "latexmk -c && mv apssamp.pdf ../paper.pdf"
       - name: Push PDF file
         run: |
           git config --global user.name 'Ising-B'
@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: paper/apssamp.pdf
+          path: paper.pdf
           
