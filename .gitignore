@@ -155,3 +155,6 @@ cython_debug/
 .aux
 .log
 .synctex.gz
+
+# VSCode
+.vscode
