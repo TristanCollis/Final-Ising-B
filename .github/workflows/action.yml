@@ -11,12 +11,13 @@ jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Git repository
+      - name: Set up Git repository on PR
         uses: actions/checkout@v3
         if: github.event_name == 'pull_request'
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
+      - name: Set up Git repository on push
         uses: actions/checkout@v3
         if: github.event_name == 'push'
         with:
