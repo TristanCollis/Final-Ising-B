@@ -3,7 +3,7 @@ from configparser import ConfigParser
 import numpy as np
 
 from source.constants.constants import T_critical
-from source.helpers.helpers import mcmc_full, get_config_section
+from source.helpers.helpers import get_config_section, mcmc_full
 
 
 def main():
