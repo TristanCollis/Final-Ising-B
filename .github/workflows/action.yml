@@ -22,12 +22,11 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: |
-            paper/apssamp.tex
+          root_file: apssamp.tex
           working_directory: paper
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: paper/apssamp.pdf
+          path: apssamp.pdf
           
