@@ -1,6 +1,7 @@
 import numpy as np
 from custom_types import ndarray
 
+
 def magnetization(lattice: ndarray[int]) -> float:
     return np.sum(lattice) / np.size(lattice)
 
@@ -31,42 +32,3 @@ def delta_energy(
     field_delta_E = 2 * b_field * lattice[*cell_index]
 
     return neighbor_delta_E + field_delta_E
-
-
-def mcmc_step(
-    lattice: ndarray[int], temperature: float, b_field: float
-) -> ndarray[int]:
-
-    new_lattice = np.copy(lattice)
-
-    while True:
-        cell_index = np.random.randint(0, lattice.shape)
-
-        if delta_energy(lattice, cell_index, b_field) < 0:
-            break
-
-        if np.random.random() < np.exp(-temperature):
-            break
-
-    new_lattice[*cell_index] *= -1
-
-    return new_lattice
-
-
-def mcmc_full(
-    lattice: ndarray[int],
-    temperature: float,
-    b_field: float,
-    total_steps: int,
-) -> ndarray[float]:
-
-    history = np.empty(total_steps)
-
-    temp_lattice = np.copy(lattice)
-
-    for t in range(total_steps):
-        temp_lattice = mcmc_step(temp_lattice, temperature, b_field)
-
-        history[t] = magnetization(temp_lattice)
-
-    return history
