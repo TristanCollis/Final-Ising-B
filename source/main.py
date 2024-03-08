@@ -42,7 +42,7 @@ if __name__ == "__main__":
     parser.add_argument("--simulate", type=bool, default=True)
     parser.add_argument("--sim_path", type=str, default="")
 
-    parser.add_argument("--graph", type=bool, default=False)
+    parser.add_argument("--graph", type=bool, default=True)
     parser.add_argument("--graph_path", type=str, default="")
 
     args = parser.parse_args()
