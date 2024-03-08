@@ -1,19 +1,15 @@
-from configparser import ConfigParser
+import argparse
 
 import numpy as np
 
 from source.constants.constants import T_critical
-from source.helpers.helpers import get_config_section, mcmc_full
+from source.helpers.helpers import mcmc_full
 
-
-def main():
-    config_path = "./config.ini"
-    config = get_config_section(config_path)
-
-    lattice_size = int(config["lattice_size"])
-    burn_in_steps = int(config["burn_in_steps"])
-    total_steps = int(config["total_steps"])
-    samples = int(config["samples"])
+def main(args):
+    lattice_size = args.lattice_size
+    burn_in_steps = args.burn_in_steps
+    total_steps = args.total_steps
+    samples = args.samples
 
     lattice = np.ones((lattice_size, lattice_size), dtype=int)
     magnetization_history = np.empty((samples, samples, total_steps), dtype=float)
@@ -28,4 +24,28 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--lattice_size", 
+        type=int, 
+        default="10"
+    )
+    parser.add_argument(
+        "--burn_in_steps", 
+        type=int, 
+        default="1000"
+    )
+    parser.add_argument(
+        "--total_steps", 
+        type=int, 
+        default="2000"
+    )
+    parser.add_argument(
+        "--samples", 
+        type=int, 
+        default="3"
+    )
+
+    args = parser.parse_args()
+    main(args)

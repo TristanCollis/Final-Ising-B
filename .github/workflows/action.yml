@@ -3,16 +3,29 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    paths: 
+      - paper/**
   pull_request:
     branches: [ "main" ]
+    paths:
+      - paper/**
   workflow_dispatch:
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Git repository
+      - name: Set up Git repository on PR
         uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Set up Git repository on push
+        uses: actions/checkout@v3
+        if: github.event_name == 'push'
+        with:
+          fetch-depth: 0
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         with:
@@ -20,15 +33,15 @@ jobs:
           working_directory: paper
           post_compile: "latexmk -c && mv apssamp.pdf ../paper.pdf"
       - name: Push PDF file
+        continue-on-error: true
         run: |
-          git config --global user.name 'Ising-B'
-          git config --global user.email '35210313+Yariazen@useres.noreply.github.com'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add paper.pdf
           git clean -f
           git commit -am "Automated commit"
           git push
       - name: Upload PDF file
-        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: PDF
