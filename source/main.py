@@ -22,7 +22,7 @@ def main(args):
         )
 
     else:
-        magnetization_history = np.fromfile(sim_path)
+        magnetization_history = np.fromfile(sim_path, dtype=int)
 
     if sim_path != "":
         magnetization_history.tofile(sim_path)
