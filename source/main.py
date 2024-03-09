@@ -10,10 +10,10 @@ def main(args):
     total_steps: int = args.total_steps
     samples: int = args.samples
 
-    do_simulation: bool = args.simulate
+    do_simulation: bool = args.simulate.lower() == "true"
     sim_path: str = args.sim_path
 
-    do_graph: bool = args.graph
+    do_graph: bool = args.graph.lower() == "true"
     graph_path: str = args.graph_path
 
     if do_simulation:
@@ -21,11 +21,11 @@ def main(args):
             lattice_size, burn_in_steps, total_steps, samples
         )
 
-    else:
-        magnetization_history = np.fromfile(sim_path, dtype=int)
+        if sim_path != "":
+            magnetization_history.tofile(sim_path)
 
-    if sim_path != "":
-        magnetization_history.tofile(sim_path)
+    else:
+        magnetization_history = np.fromfile(sim_path, dtype=float)
 
     if do_graph:
         ...
@@ -39,10 +39,12 @@ if __name__ == "__main__":
     parser.add_argument("--total_steps", type=int, default="2000")
     parser.add_argument("--samples", type=int, default="3")
 
-    parser.add_argument("--simulate", type=bool, default=True)
+    parser.add_argument(
+        "--simulate", type=str, choices=("true", "false"), default="true"
+    )
     parser.add_argument("--sim_path", type=str, default="")
 
-    parser.add_argument("--graph", type=bool, default=True)
+    parser.add_argument("--graph", type=str, choices=("true", "false"), default="true")
     parser.add_argument("--graph_path", type=str, default="")
 
     args = parser.parse_args()
