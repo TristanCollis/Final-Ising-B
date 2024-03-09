@@ -158,3 +158,5 @@ cython_debug/
 
 # VSCode
 .vscode
+profile.html
+profile.json
