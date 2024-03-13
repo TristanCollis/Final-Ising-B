@@ -3,7 +3,8 @@ from numba import njit
 
 from custom_types import ndarray
 from helpers import delta_energy, magnetization
-    
+
+
 @njit
 def metropolis_hasting(
     lattice: ndarray[int],
@@ -11,19 +12,17 @@ def metropolis_hasting(
     b_field: float,
     cell_index: ndarray[int],
 ) -> bool:
-    
+
     if (delta_energy(lattice, cell_index, b_field) < 0) or (
         np.random.random() < np.exp(-temperature)
     ):
         return True
     return False
 
+
 @njit
 def mcmc_full(
-    lattice: ndarray[int],
-    temperature: float,
-    b_field: float,
-    total_steps: int
+    lattice: ndarray[int], temperature: float, b_field: float, total_steps: int
 ) -> ndarray[float]:
 
     history = np.empty(total_steps)
@@ -31,22 +30,21 @@ def mcmc_full(
     cell_indices = np.random.randint(0, lattice.shape[0], size=(total_steps, 2))
 
     for t, cell_index in enumerate(cell_indices):
-        if metropolis_hasting(
-            temp_lattice, temperature, b_field, cell_index
-        ):
+        if metropolis_hasting(temp_lattice, temperature, b_field, cell_index):
             temp_lattice[cell_index] *= -1
         history[t] = magnetization(temp_lattice)
 
     return history
 
+
 def simulate(
-    lattice_size: int, 
-    total_steps: int, 
+    lattice_size: int,
+    total_steps: int,
     samples: int,
     temperature_range: list[float],
     b_field_range: list[float],
 ) -> tuple[ndarray[float], ndarray[float], ndarray[int]]:
-    
+
     lattice = np.ones((lattice_size, lattice_size))
 
     temperatures = np.linspace(temperature_range[0], temperature_range[1], num=samples)
