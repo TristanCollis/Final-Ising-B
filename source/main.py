@@ -16,8 +16,8 @@ def main(args):
 
     label: str = args.label
 
-    temperature: list[float] = args.temperature
-    b_field: list[float] = args.magnetic_field
+    temperature_range: list[float] = args.temperature
+    b_field_range: list[float] = args.magnetic_field
 
     do_simulation: bool = args.simulate
     do_graph: bool = args.graph
@@ -56,14 +56,14 @@ def main(args):
         logger.info(f"{arg}: {getattr(args, arg)}")
 
     if do_simulation:
-        temperature, b_field, magnetization_history = simulate(
-            lattice_size, total_steps, samples, temperature, b_field
+        temperatures, b_fields, magnetization_history = simulate(
+            lattice_size, total_steps, samples, temperature_range, b_field_range
         )
-        np.savez(sim_path, temperature=temperature, bfield=b_field, magnetization_history=magnetization_history)
+        np.savez(sim_path, temperature=temperature_range, bfield=b_field_range, magnetization_history=magnetization_history)
     else:
         saved_arrays = np.load(sim_path)
-        temperature = saved_arrays['temperature']
-        b_field = saved_arrays['bfield']
+        temperature_range = saved_arrays['temperature']
+        b_field_range = saved_arrays['bfield']
         magnetization_history = saved_arrays['magnetization_history']
 
     if do_graph:
@@ -72,9 +72,9 @@ def main(args):
             for j in range(magnetization_history.shape[1]):
                 magnetization_with_burn[i, j] = np.mean(magnetization_history[i, j][burn_in_steps:])
 
-        plot_3D(temperature, b_field, magnetization_with_burn, 0, path / label)
-        plot_3D(temperature, b_field, magnetization_with_burn, 44, path / label)
-        plot_3D(temperature, b_field, magnetization_with_burn, 90, path / label)
+        plot_3D(temperature_range, b_field_range, magnetization_with_burn, 0, path / label)
+        plot_3D(temperature_range, b_field_range, magnetization_with_burn, 44, path / label)
+        plot_3D(temperature_range, b_field_range, magnetization_with_burn, 90, path / label)
 
 
 if __name__ == "__main__":

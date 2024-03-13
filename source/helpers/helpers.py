@@ -47,4 +47,4 @@ def delta_energy(
         lattice[i, (j - 1) % lattice.shape[1]]
     )
 
-    return 2 * spin * neighbor_sum + 2 * b_field * spin
+    return float(2 * spin * neighbor_sum + 2 * b_field * spin)
