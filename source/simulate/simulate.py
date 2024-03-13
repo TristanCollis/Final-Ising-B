@@ -1,7 +1,6 @@
 import numpy as np
 from numba import njit
 
-from constants import T_critical
 from custom_types import ndarray
 from helpers import delta_energy, magnetization
     
@@ -43,16 +42,18 @@ def mcmc_full(
 def simulate(
     lattice_size: int, 
     total_steps: int, 
-    samples: int
+    samples: int,
+    temperature: list[float],
+    b_field: list[float]
 ) -> ndarray[int]:
     
     lattice = np.ones((lattice_size, lattice_size))
 
-    temperature = np.linspace(T_critical / 2, T_critical * 1.5, num=samples)
-    b_field = np.linspace(-1, 1, num=samples)
+    temperature = np.linspace(temperature[0], temperature[1], num=samples)
+    b_field = np.linspace(b_field[0], b_field[1], num=samples)
 
     T, B = np.meshgrid(temperature, b_field)
-    magnetization_history = np.zeros_like(T, dtype=object)
+    magnetization_history = np.zeros((len(B), len(T)), dtype=object)
 
     for t, T in enumerate(temperature):
         for b, B in enumerate(b_field):
