@@ -153,11 +153,9 @@ cython_debug/
 
 # Latex
 .aux
-.log
 .synctex.gz
 
 # VSCode
 .vscode
 profile.html
 profile.json
-data
