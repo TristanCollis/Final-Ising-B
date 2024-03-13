@@ -13,8 +13,9 @@ def metropolis_hasting(
     cell_index: ndarray[int],
 ) -> bool:
 
-    if (delta_energy(lattice, cell_index, b_field) < 0) or (
-        np.random.random() < np.exp(-temperature)
+    energy_difference = delta_energy(lattice, cell_index, b_field)
+    if (energy_difference < 0) or (
+        np.random.random() < np.exp(-energy_difference / temperature)
     ):
         return True
     return False
@@ -52,7 +53,7 @@ def simulate(
 
     for t, T in enumerate(temperatures):
         for b, B in enumerate(b_fields):
-            magnetization_history[t, b] = mcmc_full(
+            magnetization_history[t, b, :] = mcmc_full(
                 lattice=lattice, temperature=T, b_field=B, total_steps=total_steps
             )
 

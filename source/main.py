@@ -72,11 +72,11 @@ def main(args):
         magnetization_with_burn = np.empty_like(magnetization_history)
         for i in range(magnetization_history.shape[0]):
             for j in range(magnetization_history.shape[1]):
-                magnetization_with_burn[i, j] = np.mean(magnetization_history[i, j][burn_in_steps:])
+                magnetization_with_burn[i, j] = np.mean(magnetization_history[i, j, burn_in_steps:])
 
-        plot_3D(temperature_range, b_field_range, magnetization_with_burn, 0, path / label)
-        plot_3D(temperature_range, b_field_range, magnetization_with_burn, 44, path / label)
-        plot_3D(temperature_range, b_field_range, magnetization_with_burn, 90, path / label)
+        plot_3D(temperatures, b_fields, magnetization_with_burn, 0, path / label)
+        plot_3D(temperatures, b_fields, magnetization_with_burn, 44, path / label)
+        plot_3D(temperatures, b_fields, magnetization_with_burn, 90, path / label)
 
 
 if __name__ == "__main__":
