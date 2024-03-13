@@ -42,9 +42,9 @@ def main(args):
     if do_graph:
         magnetization_no_burn = magnetization_history[burn_in_steps:]
         magnetization = np.mean(magnetization_no_burn, axis=1)
-        plot_3D(temperature, b_field, magnetization, 0, path / label)
-        plot_3D(temperature, b_field, magnetization, 45, path / label)
-        plot_3D(temperature, b_field, magnetization, 90, path / label)
+        #plot_3D(temperature, b_field, magnetization, 0, path / label)
+        #plot_3D(temperature, b_field, magnetization, 45, path / label)
+        #plot_3D(temperature, b_field, magnetization, 90, path / label)
 
 
 if __name__ == "__main__":
