@@ -6,7 +6,6 @@ from pathlib import Path
 import numpy as np
 from simulate import simulate
 from graph import plot_3D
-from custom_types import ndarray
 
 def main(args):
     lattice_size: int = args.lattice_size
@@ -56,14 +55,17 @@ def main(args):
         logger.info(f"{arg}: {getattr(args, arg)}")
 
     if do_simulation:
-        temperatures, b_fields, magnetization_history = simulate(
-            lattice_size, total_steps, samples, temperature_range, b_field_range
+        temperatures = np.linspace(temperature_range[0], temperature_range[1], num=samples)
+        b_fields = np.linspace(b_field_range[0], b_field_range[1], num=samples)
+
+        magnetization_history = simulate(
+            lattice_size, total_steps, samples, temperatures, b_fields
         )
-        np.savez(sim_path, temperature=temperature_range, bfield=b_field_range, magnetization_history=magnetization_history)
+        np.savez(sim_path, temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
     else:
         saved_arrays = np.load(sim_path)
-        temperature_range = saved_arrays['temperature']
-        b_field_range = saved_arrays['bfield']
+        temperatures = saved_arrays['temperature']
+        b_fields = saved_arrays['bfield']
         magnetization_history = saved_arrays['magnetization_history']
 
     if do_graph:

@@ -41,22 +41,19 @@ def simulate(
     lattice_size: int,
     total_steps: int,
     samples: int,
-    temperature_range: list[float],
-    b_field_range: list[float],
-) -> tuple[ndarray[float], ndarray[float], ndarray[int]]:
+    temperatures: ndarray[float],
+    b_fields: ndarray[float],
+) -> ndarray[int]:
 
     lattice = np.ones((lattice_size, lattice_size))
 
-    temperatures = np.linspace(temperature_range[0], temperature_range[1], num=samples)
-    b_fields = np.linspace(b_field_range[0], b_field_range[1], num=samples)
-
-    T, B = np.meshgrid(temperature_range, b_field_range)
+    T, B = np.meshgrid(temperatures, b_fields)
     magnetization_history = np.zeros((len(B), len(T)), dtype=object)
 
-    for t, T in enumerate(temperature_range):
-        for b, B in enumerate(b_field_range):
+    for t, T in enumerate(temperatures):
+        for b, B in enumerate(b_fields):
             magnetization_history[t, b] = mcmc_full(
                 lattice=lattice, temperature=T, b_field=B, total_steps=total_steps
             )
 
-    return temperatures, b_fields, magnetization_history
+    return magnetization_history

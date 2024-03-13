@@ -160,3 +160,4 @@ cython_debug/
 .vscode
 profile.html
 profile.json
+data
