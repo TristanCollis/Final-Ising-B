@@ -1,8 +1,10 @@
 import argparse
+import sys
+from pathlib import Path
 
 import numpy as np
 from simulate import simulate
-
+from graph import plot_3D
 
 def main(args):
     lattice_size: int = args.lattice_size
@@ -10,25 +12,39 @@ def main(args):
     total_steps: int = args.total_steps
     samples: int = args.samples
 
-    do_simulation: bool = args.simulate.lower() == "true"
-    sim_path: str = args.sim_path
+    label: str = args.label
 
-    do_graph: bool = args.graph.lower() == "true"
-    graph_path: str = args.graph_path
+    do_simulation: bool = args.simulate
+    do_graph: bool = args.graph
+
+    if label == "":
+        print("Please provide a label for the simulation")
+        sys.exit()
+
+    path = Path("..") / "data"
+
+    if not (path / label).exists():
+        (path / label).mkdir()
+    
+    sim_path = str(path / label / "history.npy")
 
     if do_simulation:
-        magnetization_history = simulate(
-            lattice_size, burn_in_steps, total_steps, samples
+        temperature, b_field, magnetization_history = simulate(
+            lattice_size, total_steps, samples
         )
-
-        if sim_path != "":
-            magnetization_history.tofile(sim_path)
-
+        np.savez(sim_path, temperature=temperature, bfield=b_field, magnetization_history=magnetization_history)
     else:
-        magnetization_history = np.fromfile(sim_path, dtype=float)
+        saved_arrays = np.load(sim_path)
+        temperature = saved_arrays['temperature']
+        b_field = saved_arrays['bfield']
+        magnetization_history = saved_arrays['magnetization_history']
 
     if do_graph:
-        ...
+        magnetization_no_burn = magnetization_history[burn_in_steps:]
+        magnetization = np.mean(magnetization_no_burn, axis=1)
+        plot_3D(temperature, b_field, magnetization, 0, path / label)
+        plot_3D(temperature, b_field, magnetization, 45, path / label)
+        plot_3D(temperature, b_field, magnetization, 90, path / label)
 
 
 if __name__ == "__main__":
@@ -40,11 +56,16 @@ if __name__ == "__main__":
     parser.add_argument("--samples", type=int, default="3")
 
     parser.add_argument(
-        "--simulate", type=str, choices=("true", "false"), default="true"
+        "--simulate", 
+        action='store_true'
     )
     parser.add_argument("--sim_path", type=str, default="")
+    parser.add_argument("--label", type=str, default="")
 
-    parser.add_argument("--graph", type=str, choices=("true", "false"), default="true")
+    parser.add_argument(
+        "--graph", 
+        action='store_true'
+    )
     parser.add_argument("--graph_path", type=str, default="")
 
     args = parser.parse_args()
