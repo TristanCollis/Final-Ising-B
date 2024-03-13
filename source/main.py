@@ -27,7 +27,7 @@ def main(args):
         print("Please provide a label for the simulation")
         sys.exit()
 
-    path = Path("..") / "data"
+    path = Path(".") / "data"
 
     if force:
         if (path / label).exists():
@@ -69,7 +69,7 @@ def main(args):
         magnetization_history = saved_arrays['magnetization_history']
 
     if do_graph:
-        magnetization_with_burn = np.empty_like(magnetization_history)
+        magnetization_with_burn = np.empty(magnetization_history.shape[:2])
         for i in range(magnetization_history.shape[0]):
             for j in range(magnetization_history.shape[1]):
                 magnetization_with_burn[i, j] = np.mean(magnetization_history[i, j, burn_in_steps:])

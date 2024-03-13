@@ -49,7 +49,7 @@ def simulate(
     lattice = np.ones((lattice_size, lattice_size))
 
     T, B = np.meshgrid(temperatures, b_fields)
-    magnetization_history = np.zeros((len(B), len(T)), dtype=object)
+    magnetization_history = np.zeros((len(B), len(T), total_steps), dtype=float)
 
     for t, T in enumerate(temperatures):
         for b, B in enumerate(b_fields):
