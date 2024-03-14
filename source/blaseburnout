@@ -1,0 +1,41 @@
+Msize = len(magnetism) - 1
+h1 = magnetism[Msize]           #100%
+h2 = magnetism[int(Msize* 0.5)] #50%
+
+flip    = -1  #flips the direction(+/-) that we add the percentages
+percent = 0.5
+error   = 0.05
+print(magnetism[Msize])
+print((magnetism[int(Msize * percent)]))
+
+def compareH(h_val):
+    print("difference: ",h1 - h_val)
+    if abs(h1 - h_val) < error: #keeping going left
+        return -1
+    else: #move right
+        return 1
+        
+
+if abs(h1 - h2) < error:  # good
+    for i in range(10):
+        n = 2**(i+2)   #half-factor
+        percent += 1/(flip * n)
+        print(percent)
+        flip = compareH(magnetism[int(Msize * percent)])
+        
+if abs(h1 - h2) > error:  # bad
+    print("Do more steps, or burn-out steps not applicable, or error too small")
+
+print(percent * (Msize+1))
+    
+plt.plot(magnetism)
+plt.xlabel('steps')
+plt.ylabel('Net Magnetization')
+
+# Add a vertical line at a specific x-value (e.g., x=10)
+specific_x_value = percent * (Msize+1)
+plt.axvline(x=specific_x_value, color='r', linestyle='--')  # Adjust color and linestyle as needed
+
+plt.grid(True)
+plt.show()
+    
