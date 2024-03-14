@@ -160,5 +160,5 @@ cython_debug/
 profile.html
 profile.json
 
-data/
+data/test
 .vsls.json
