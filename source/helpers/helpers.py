@@ -1,6 +1,7 @@
 import numpy as np
-from custom_types import ndarray
 from numba import njit
+
+from custom_types import ndarray
 
 
 @njit
@@ -8,6 +9,7 @@ def magnetization(lattice: ndarray[int]) -> float:
     return np.sum(lattice) / len(lattice.flat)
 
 
+@njit
 def energy(lattice: ndarray[int], b_field: float) -> float:
     lattice_offset_x = np.roll(lattice, 1, 0)
     lattice_offset_y = np.roll(lattice, 1, 1)
@@ -21,6 +23,7 @@ def energy(lattice: ndarray[int], b_field: float) -> float:
 
 @njit
 def fast_neighbor_sum(lattice: ndarray[int], neighbor_indices: ndarray[int]) -> float:
+
     cum_sum: float = 0.0
     for index in neighbor_indices:
         cum_sum += float(lattice[index[0], index[1]])
@@ -28,21 +31,19 @@ def fast_neighbor_sum(lattice: ndarray[int], neighbor_indices: ndarray[int]) -> 
     return cum_sum
 
 
+@njit
 def delta_energy(
     lattice: ndarray[int], cell_index: ndarray[int], b_field: float
 ) -> float:
-    neighbor_offsets = np.array([[0, 1], [0, -1], [1, 0], [-1, 0]], dtype=np.int64)
-    neighbor_indices = np.mod(
-        neighbor_offsets + cell_index, lattice.shape[0], dtype=np.int64
+
+    i, j = cell_index
+    spin = lattice[i, j]
+
+    neighbor_sum = (
+        lattice[(i + 1) % lattice.shape[0], j]
+        + lattice[i, (j + 1) % lattice.shape[1]]
+        + lattice[(i - 1) % lattice.shape[0], j]
+        + lattice[i, (j - 1) % lattice.shape[1]]
     )
 
-    neighbor_delta_E = (
-        2
-        * lattice[*cell_index]
-        * fast_neighbor_sum(lattice, neighbor_indices)
-        # * np.sum([lattice[*index] for index in neighbor_indices])
-    )
-
-    field_delta_E = 2 * b_field * lattice[*cell_index]
-
-    return float(neighbor_delta_E + field_delta_E)
+    return float(2 * spin * neighbor_sum + 2 * b_field * spin)
