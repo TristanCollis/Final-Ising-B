@@ -82,7 +82,7 @@ def main(args):
         simulation_timer.stop()
         np.savez(sim_path / "history", temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
     else:
-        saved_arrays = np.load(sim_path / "history")
+        saved_arrays = np.load(sim_path / "history.npz")
         temperatures = saved_arrays['temperature']
         b_fields = saved_arrays['bfield']
         magnetization_history = saved_arrays['magnetization_history']
