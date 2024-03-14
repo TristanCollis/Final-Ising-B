@@ -1,7 +1,6 @@
 import time
 import logging
 
-
 class Timer:
     def __init__(self, type: str) -> None:
         self.type = type

@@ -1,7 +1,10 @@
+import logging
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from pathlib import Path
 
+logger = logging.getLogger("main")
 plt.ioff()
 
 def plot_3D(T, B, M, azim, path):
@@ -13,4 +16,15 @@ def plot_3D(T, B, M, azim, path):
     ax.set_ylabel('B Field')
     ax.set_zlabel('Magnetization') #type: ignore
     ax.set_title('3D Meshgrid Display')
+    logger.info(f"Saving graph_{azim}.png at {path / f'graph_{azim}.png'}")
     plt.savefig(path / f"graph_{azim}.png")
+
+def plot_burnout(magnetism, burnout_limit, path, temperature, b_field):
+    plt.plot(magnetism)
+    plt.xlabel('steps')
+    plt.ylabel('Net Magnetization')
+    plt.axvline(x=burnout_limit, color='r', linestyle='--')  # Adjust color and linestyle as needed
+    plt.grid(True)
+    plt.title(f'Burnout Limit: {burnout_limit} \n Temperature: {temperature} \n B Field: {b_field}')
+    logger.info(f"Saving burnout.png at {path / 'burnout.png'}")
+    plt.savefig(path / "burnout.png")
