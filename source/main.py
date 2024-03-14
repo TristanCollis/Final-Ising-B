@@ -27,7 +27,11 @@ def main(args):
         print("Please provide a label for the simulation")
         sys.exit()
 
-    path = Path(".") / "data"
+    path = Path(".")
+
+    if not (path / "data").exists():
+        (path / "data").mkdir()
+    path = path / "data"
 
     if force:
         if (path / label).exists():
@@ -40,11 +44,12 @@ def main(args):
         print(f"Label {label} already exists, please provide a different label or run with -f")
         sys.exit()
     
-    sim_path = str(path / label / "history")
+    sim_path = path / label / "history"
+    log_path = path / label / "log.log"
 
     logger = logging.getLogger("logger")
     logger.setLevel(logging.DEBUG)
-    file_handler = logging.FileHandler(path / label / "log.txt")
+    file_handler = logging.FileHandler(log_path)
     file_handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s - %(message)s", datefmt="%d-%b-%y %H:%M:%S")
     file_handler.setFormatter(formatter)
@@ -59,7 +64,7 @@ def main(args):
         b_fields = np.linspace(b_field_range[0], b_field_range[1], num=samples)
 
         magnetization_history = simulate(
-            lattice_size, total_steps, samples, temperatures, b_fields
+            lattice_size, total_steps, temperatures, b_fields
         )
         np.savez(sim_path, temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
     else:
@@ -68,16 +73,15 @@ def main(args):
         b_fields = saved_arrays['bfield']
         magnetization_history = saved_arrays['magnetization_history']
 
+
     if do_graph:
-        magnetization_with_burn = np.empty(magnetization_history.shape[:2])
-        for i in range(magnetization_history.shape[0]):
-            for j in range(magnetization_history.shape[1]):
-                magnetization_with_burn[i, j] = np.mean(magnetization_history[i, j, burn_in_steps:])
+        magnetization_with_burn = np.mean(magnetization_history[:, :, burn_in_steps:], axis=2)
 
-        plot_3D(temperatures, b_fields, magnetization_with_burn, 0, path / label)
-        plot_3D(temperatures, b_fields, magnetization_with_burn, 44, path / label)
-        plot_3D(temperatures, b_fields, magnetization_with_burn, 90, path / label)
+        T, B = np.meshgrid(temperatures, b_fields)
 
+        plot_3D(T, B, magnetization_with_burn, 0, path / label)
+        plot_3D(T, B, magnetization_with_burn, 45, path / label)
+        plot_3D(T, B, magnetization_with_burn, 90, path / label)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -98,13 +102,13 @@ if __name__ == "__main__":
         "--total_steps",
         "-steps", 
         type=int, 
-        default="2000"
+        default="5000"
     )
 
     parser.add_argument(
         "--samples", 
         type=int, 
-        default="3"
+        default="9"
     )
 
     parser.add_argument(
@@ -117,15 +121,16 @@ if __name__ == "__main__":
         "--temperature",
         "-t",
         type=float,
-        nargs=2
+        nargs=2,
+        default=[1, 5]
     )
 
     parser.add_argument(
         "--magnetic_field",
         "-b",
         type=float,
-        default=2,
-        nargs=2
+        nargs=2,
+        default=[-5, 5]
     )
 
     parser.add_argument(

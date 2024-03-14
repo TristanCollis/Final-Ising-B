@@ -41,7 +41,6 @@ def mcmc_full(
 def simulate(
     lattice_size: int,
     total_steps: int,
-    samples: int,
     temperatures: ndarray[float],
     b_fields: ndarray[float],
 ) -> ndarray[int]:
@@ -49,11 +48,11 @@ def simulate(
     lattice = np.ones((lattice_size, lattice_size))
 
     T, B = np.meshgrid(temperatures, b_fields)
-    magnetization_history = np.zeros((len(B), len(T), total_steps), dtype=float)
+    magnetization_history = np.zeros((len(T), len(B), total_steps), dtype=float)
 
     for t, T in enumerate(temperatures):
         for b, B in enumerate(b_fields):
-            magnetization_history[t, b, :] = mcmc_full(
+            magnetization_history[b, t, :] = mcmc_full(
                 lattice=lattice, temperature=T, b_field=B, total_steps=total_steps
             )
 

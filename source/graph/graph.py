@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 from pathlib import Path
 
 def plot_3D(T, B, M, azim, path):
