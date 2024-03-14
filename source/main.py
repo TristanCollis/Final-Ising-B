@@ -1,11 +1,14 @@
 import argparse
 import sys
 import logging
+import os
+import glob
 from pathlib import Path
 
 import numpy as np
 from simulate import simulate
-from graph import plot_3D
+from helpers.graph import plot_3D
+from helpers.timer import Timer
 
 def main(args):
     lattice_size: int = args.lattice_size
@@ -31,23 +34,30 @@ def main(args):
 
     if not (path / "data").exists():
         (path / "data").mkdir()
-    path = path / "data"
 
-    if force:
-        if (path / label).exists():
-            import shutil
-            shutil.rmtree(path / label)
-
-    if not (path / label).exists():
+    if not (path / "data"/ label).exists():
         (path / label).mkdir()
-    else:
+        do_simulation = True
+        do_graph = True
+    elif not force:
         print(f"Label {label} already exists, please provide a different label or run with -f")
         sys.exit()
-    
-    sim_path = path / label / "history"
-    log_path = path / label / "log.log"
 
-    logger = logging.getLogger("logger")
+    sim_path = path / "data" / label
+
+    if force:
+        if os.path.exists(sim_path / "log.log"):
+            os.remove(sim_path / "log.log")
+        if do_simulation:
+            if os.path.exists(sim_path / "history.npz"):
+                os.remove(sim_path / "history.npz")
+        if do_graph:
+            for file in glob.glob("*.png"):
+                os.remove(file)
+    
+    log_path = sim_path / "log.log"
+
+    logger = logging.getLogger("main")
     logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(log_path)
     file_handler.setLevel(logging.DEBUG)
@@ -59,29 +69,35 @@ def main(args):
     for arg in vars(args):
         logger.info(f"{arg}: {getattr(args, arg)}")
 
+    logger.info(f"Saving simulation data to {sim_path}")
+
     if do_simulation:
+        simulation_timer = Timer("Simulation")
         temperatures = np.linspace(temperature_range[0], temperature_range[1], num=samples)
         b_fields = np.linspace(b_field_range[0], b_field_range[1], num=samples)
 
         magnetization_history = simulate(
             lattice_size, total_steps, temperatures, b_fields
         )
-        np.savez(sim_path, temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
+        simulation_timer.stop()
+        np.savez(sim_path / "history", temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
     else:
-        saved_arrays = np.load(sim_path)
+        saved_arrays = np.load(sim_path / "history")
         temperatures = saved_arrays['temperature']
         b_fields = saved_arrays['bfield']
         magnetization_history = saved_arrays['magnetization_history']
 
 
     if do_graph:
+        graph_timer = Timer("Graphing")
         magnetization_with_burn = np.mean(magnetization_history[:, :, burn_in_steps:], axis=2)
 
         T, B = np.meshgrid(temperatures, b_fields)
 
-        plot_3D(T, B, magnetization_with_burn, 0, path / label)
-        plot_3D(T, B, magnetization_with_burn, 45, path / label)
-        plot_3D(T, B, magnetization_with_burn, 90, path / label)
+        plot_3D(T, B, magnetization_with_burn, 0, sim_path)
+        plot_3D(T, B, magnetization_with_burn, 45, sim_path)
+        plot_3D(T, B, magnetization_with_burn, 90, sim_path)
+        graph_timer.stop()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

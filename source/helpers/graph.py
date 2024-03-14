@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-
 from pathlib import Path
+
+plt.ioff()
 
 def plot_3D(T, B, M, azim, path):
     fig = plt.figure(figsize=(10, 8))

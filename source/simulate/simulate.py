@@ -4,7 +4,6 @@ from numba import njit
 from custom_types import ndarray
 from helpers import delta_energy, magnetization
 
-
 @njit
 def metropolis_hasting(
     lattice: ndarray[int],
