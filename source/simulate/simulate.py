@@ -1,38 +1,35 @@
+import copy
 import numpy as np
 from numba import njit
 
 from custom_types import ndarray
-from helpers import delta_energy, magnetization
-
-@njit
-def metropolis_hasting(
-    lattice: ndarray[int],
-    temperature: float,
-    b_field: float,
-    cell_index: ndarray[int],
-) -> bool:
-
-    energy_difference = delta_energy(lattice, cell_index, b_field)
-    if (energy_difference < 0) or (
-        np.random.random() < np.exp(-energy_difference / temperature)
-    ):
-        return True
-    return False
-
+from helpers import compareH
 
 @njit
 def mcmc_full(
-    lattice: ndarray[int], temperature: float, b_field: float, total_steps: int
+    lattice: ndarray[int], 
+    temperature: float, 
+    b_field: float,
+    total_steps: int
 ) -> ndarray[float]:
 
     history = np.empty(total_steps)
-    temp_lattice = np.copy(lattice)
     cell_indices = np.random.randint(0, lattice.shape[0], size=(total_steps, 2))
 
     for t, cell_index in enumerate(cell_indices):
-        if metropolis_hasting(temp_lattice, temperature, b_field, cell_index):
-            temp_lattice[cell_index] *= -1
-        history[t] = magnetization(temp_lattice)
+        i, j = cell_index
+        spin = lattice[i, j]
+
+        neighbor_sum = (
+            lattice[(i + 1) % lattice.shape[0], j]
+            + lattice[i, (j + 1) % lattice.shape[1]]
+            + lattice[(i - 1) % lattice.shape[0], j]
+            + lattice[i, (j - 1) % lattice.shape[1]]
+        )
+        energy_diff = 2 * spin * neighbor_sum + 2 * b_field * spin
+        if energy_diff <= 0 or np.random.rand() < np.exp(-energy_diff / temperature):
+            lattice[i, j] *= -1
+        history[t] = np.sum(lattice) / lattice.size
 
     return history
 
@@ -45,14 +42,36 @@ def simulate(
 ) -> ndarray[int]:
 
     lattice = np.ones((lattice_size, lattice_size))
+    magnetization_history = np.zeros((len(temperatures), len(b_fields), total_steps), dtype=float)
 
-    T, B = np.meshgrid(temperatures, b_fields)
-    magnetization_history = np.zeros((len(T), len(B), total_steps), dtype=float)
-
-    for t, T in enumerate(temperatures):
-        for b, B in enumerate(b_fields):
-            magnetization_history[b, t, :] = mcmc_full(
-                lattice=lattice, temperature=T, b_field=B, total_steps=total_steps
+    for j, B in enumerate(b_fields):
+        for i, T in enumerate(temperatures):
+            temp_lattice = copy.deepcopy(lattice)
+            magnetization_history[j, i, :] = mcmc_full(
+                lattice=temp_lattice, temperature=T, b_field=B, total_steps=total_steps
             )
 
     return magnetization_history
+
+@njit
+def burnout(
+    total_steps: int,
+    percent: float,
+    error: float,
+    magnetization: ndarray[float]
+) -> float:
+    Msize = len(magnetization) - 1
+    h1 = magnetization[Msize]           #100%
+    h2 = magnetization[int(Msize* 0.5)] #50%
+
+    flip = -1 
+
+    if abs(h1 - h2) < error:
+        for i in range(total_steps):
+            n = 2**(i+2)
+            percent += 1/(flip * n)
+            flip = compareH(magnetization[int(Msize * percent)], h1, error)
+
+    if abs(h1 - h2) > error:
+        return np.nan
+    return percent * (Msize+1)
