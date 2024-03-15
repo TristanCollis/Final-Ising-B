@@ -26,7 +26,7 @@ def mcmc_full(
             + lattice[(i - 1) % lattice.shape[0], j]
             + lattice[i, (j - 1) % lattice.shape[1]]
         )
-        energy_diff = 2 * spin * neighbor_sum + 2 * b_field * spin
+        energy_diff = 2 * spin * (neighbor_sum + b_field)
         if energy_diff <= 0 or np.random.rand() < np.exp(-energy_diff / temperature):
             lattice[i, j] *= -1
         history[t] = np.sum(lattice) / lattice.size

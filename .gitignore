@@ -162,3 +162,5 @@ profile.json
 
 data/test*/
 .vsls.json
+/data/low_res_test
+profile_full.html

@@ -78,9 +78,10 @@ def main(args):
 
             magnetization_with_burn = np.mean(magnetization_history[:, :, burn_in_steps:], axis=2)
             T, B = np.meshgrid(temperatures, b_fields)
-            plot_3D(T, B, magnetization_with_burn, 0, sim_path)
+            plot_3D(T, B, magnetization_with_burn, 0, sim_path, elev=90)
             plot_3D(T, B, magnetization_with_burn, 45, sim_path)
             plot_3D(T, B, magnetization_with_burn, 90, sim_path)
+            plot_3D(T, B, magnetization_with_burn, 315, sim_path)
         
         case "burnout":
             if not (sim_path / "history.npz").exists():
