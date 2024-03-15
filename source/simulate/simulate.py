@@ -41,7 +41,7 @@ def simulate(
     b_fields: ndarray[float],
 ) -> ndarray[int]:
 
-    lattice = np.ones((lattice_size, lattice_size))
+    lattice = np.random.choice((-1, 1), (lattice_size, lattice_size))
     magnetization_history = np.zeros((len(temperatures), len(b_fields), total_steps), dtype=float)
 
     for j, B in enumerate(b_fields):
