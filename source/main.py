@@ -10,38 +10,20 @@ from helpers.graph import plot_3D, plot_burnout
 from helpers.timer import Timer
 
 def main(args):
+    mode: str = args.mode
+
     label: str = args.label
+    lattice_size: int = args.lattice_size
+    burn_in_steps: int = args.burn_in_steps
+    total_steps: int = args.total_steps
+    samples: int = args.samples
+    temperature_range: list[float] = args.temperature_range
+    b_field_range: list[float] = args.magnetic_field_range
+    magnetization_index: list[int] = args.magnetization_index
+    percent: float = args.percent
+    error: float = args.error
 
-    match args.subparsers:
-        case "simulate":
-            do_simulation: bool = True
-            do_analyze: bool = False
-
-            do_graph: bool = args.graph
-            force: bool = args.force
-
-            lattice_size: int = args.lattice_size
-            burn_in_steps: int = args.burn_in_steps
-            total_steps: int = args.total_steps
-            samples: int = args.samples
-            temperature_range: list[float] = args.temperature_range
-            b_field_range: list[float] = args.magnetic_field_range
-
-        case "analyze":
-            do_analyze: bool = True
-            do_simulation: bool = False
-
-            do_graph: bool = args.graph
-
-            total_steps: int = args.total_steps
-            temperature_index: int = args.temperature_index
-            magnetic_field_index: int = args.magnetic_field_index
-            percent: float = args.percent
-            error: float = args.error
-
-    if label == "":
-        print("Please provide a label for the simulation")
-        sys.exit()
+    force: bool = args.force
 
     path = Path(".")
     if not (path / "data").exists():
@@ -68,156 +50,76 @@ def main(args):
 
     logger.info(f"Saving data to {sim_path}")
 
-    if do_simulation:
-        if (sim_path / "history.npz").exists() and not force:
-            logger.info("Existing simulation found and force flag not set, skipping simulation")
-            saved_arrays = np.load(sim_path / "history.npz")
-            temperatures = saved_arrays['temperature']
-            b_fields = saved_arrays['bfield']
-            magnetization_history = saved_arrays['magnetization_history']
-        else:
-            logger.info("Starting simulation")
-            simulation_timer = Timer("Simulation")
-            temperatures = np.linspace(temperature_range[0], temperature_range[1], num=samples)
-            b_fields = np.linspace(b_field_range[0], b_field_range[1], num=samples)
+    match mode:
+        case "simulate":
+            if (sim_path / "history.npz").exists() and not force:
+                logger.info("Existing simulation found and force flag not set, skipping simulation")
+                saved_arrays = np.load(sim_path / "history.npz")
+                temperatures = saved_arrays['temperature']
+                b_fields = saved_arrays['bfield']
+                magnetization_history = saved_arrays['magnetization_history']
+            else:
+                logger.info("Starting simulation")
+                simulation_timer = Timer("Simulation")
 
-            magnetization_history = simulate(
-                lattice_size, total_steps, temperatures, b_fields
-            )
-            simulation_timer.stop()
-            np.savetxt(sim_path / "temperatures.csv", temperatures, delimiter=",")
-            np.savetxt(sim_path / "bfields.csv", b_fields, delimiter=",")
-            np.savez(sim_path / "history", temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
+                temperatures = np.linspace(temperature_range[0], temperature_range[1], num=samples)
+                b_fields = np.linspace(b_field_range[0], b_field_range[1], num=samples)
 
-        if do_graph:
-            logger.info("Starting graphing simulation")
+                magnetization_history = simulate(
+                    lattice_size, total_steps, temperatures, b_fields
+                )
+
+                simulation_timer.stop()
+                logger.info("Simulation complete")
+
+                np.savetxt(sim_path / "temperatures.csv", temperatures, delimiter=",")
+                np.savetxt(sim_path / "bfields.csv", b_fields, delimiter=",")
+                np.savez(sim_path / "history", temperature=temperatures, bfield=b_fields, magnetization_history=magnetization_history)
+
             magnetization_with_burn = np.mean(magnetization_history[:, :, burn_in_steps:], axis=2)
-
             T, B = np.meshgrid(temperatures, b_fields)
-
-            plot_3D(T, B, magnetization_with_burn, 0, sim_path)
+            plot_3D(T, B, magnetization_with_burn, 0, sim_path, elev=90)
             plot_3D(T, B, magnetization_with_burn, 45, sim_path)
             plot_3D(T, B, magnetization_with_burn, 90, sim_path)
-            logger.info("Graphing simulation complete")
-
-    if do_analyze:
-        logger.info("Starting analysis")
-
-        saved_arrays = np.load(sim_path / "history.npz")
-        magnetization_history = saved_arrays['magnetization_history']
-        temperatures = saved_arrays['temperature']
-        b_fields = saved_arrays['bfield']
+            plot_3D(T, B, magnetization_with_burn, 315, sim_path)
         
-        analyze_timer = Timer("Analysis")
+        case "burnout":
+            if not (sim_path / "history.npz").exists():
+                logger.info("No simulation found, skipping burnout analysis")
+                sys.exit()
+            if magnetization_index is None:
+                logger.info("No magnetization index provided, skipping burnout analysis")
+                sys.exit()
+            
+            logger.info("Starting burnout analysis")
 
-        magnetization = magnetization_history[temperature_index, magnetic_field_index]
-        burnout_limit = burnout(total_steps, percent, error, magnetization)
-
-        analyze_timer.stop()
-
-        if(np.isnan(burnout_limit)):
-            logger.info("Burnout limit not found")
-        else:
-            logger.info(f"Burnout limit: {burnout_limit}")
-
-        if do_graph:
-            plot_burnout(magnetization, burnout_limit, sim_path, temperatures[temperature_index], b_fields[magnetic_field_index])
-                
+            saved_arrays = np.load(sim_path / "history.npz")
+            magnetization_history = saved_arrays['magnetization_history']
+            temperatures = saved_arrays['temperature']
+            b_fields = saved_arrays['bfield']
+            magnetization = magnetization_history[magnetization_index]
+            burnout_limit = burnout(total_steps, percent, error, magnetization)
+            if(np.isnan(burnout_limit)):
+                logger.info("Burnout limit not found")
+            else:
+                logger.info(f"Burnout limit: {burnout_limit}")
+            
+            plot_burnout(magnetization, burnout_limit, sim_path, temperatures[magnetization_index[0]], b_fields[magnetization_index[1]])                
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Your script description here")
 
-    parser.add_argument(
-        "--label",
-        type=str,
-        default=""
-    )
+    parser.add_argument("mode", choices=["simulate", "burnout"], help="Mode of operation")
+    parser.add_argument("--label", "-l", type=str, default="", help="Label string", required=True)
+    parser.add_argument("--lattice_size", type=int, default=10, help="Size of the lattice")
+    parser.add_argument("--burn_in_steps", type=int, default=1000, help="Number of burn-in steps")
+    parser.add_argument("--total_steps", type=int, default=5000, help="Total number of steps")
+    parser.add_argument("--samples", type=int, default=9, help="Number of samples")
+    parser.add_argument("--temperature_range", nargs=2, type=int, default=[1, 5], help="Temperature range")
+    parser.add_argument("--magnetic_field_range", nargs=2, type=int, default=[-5, 5], help="Magnetic field range")
+    parser.add_argument("--magnetization_index", type=int, default=2, help="Magnetization index")
+    parser.add_argument("--percent", type=float, default=0.5, help="Percent")
+    parser.add_argument("--error", type=float, default=0.05, help="Error")
+    parser.add_argument("--force", "-f", action="store_true", help="Force flag")
 
-    subparsers = parser.add_subparsers(dest="subparsers")
-    
-    simulate_parser = subparsers.add_parser("simulate")
-    simulate_parser.add_argument(
-        "--lattice_size", 
-        type=int, 
-        default="10"
-    )
-    simulate_parser.add_argument(
-        "--burn_in_steps", 
-        type=int, 
-        default="1000"
-    )
-    simulate_parser.add_argument(
-        "--total_steps",
-        "-steps", 
-        type=int, 
-        default="5000"
-    )
-    simulate_parser.add_argument(
-        "--samples", 
-        type=int, 
-        default="9"
-    )
-    simulate_parser.add_argument(
-        "--temperature_range",
-        "-tr",
-        type=float,
-        nargs=2,
-        default=[1, 5]
-    )
-    simulate_parser.add_argument(
-        "--magnetic_field_range",
-        "-br",
-        type=float,
-        nargs=2,
-        default=[-5, 5]
-    )
-    simulate_parser.add_argument(
-        "--graph", 
-        "-g",
-        action='store_true'
-    )
-    simulate_parser.add_argument(
-        "--force",
-        "-f",
-        action='store_true'
-    )
-
-    analyze_parser = subparsers.add_parser("analyze")
-    analyze_parser.add_argument(
-        "--total_steps",
-        "-steps", 
-        type=int, 
-        default="10"
-    )
-    analyze_parser.add_argument(
-        "--temperature_index",
-        "-ti",
-        type=int,
-        required=True
-    )
-    analyze_parser.add_argument(
-        "--magnetic_field_index",
-        "-bi",
-        type=int,
-        required=True
-    )
-    analyze_parser.add_argument(
-        "--percent",
-        "-p",
-        type=float,
-        default="0.5"
-    )
-    analyze_parser.add_argument(
-        "--error",
-        "-e",
-        type=float,
-        default="0.05"
-    )
-    analyze_parser.add_argument(
-        "--graph", 
-        "-g",
-        action='store_true'
-    )
-
-    args = parser.parse_args()
-    main(args)
+    main(parser.parse_args())
