@@ -6,7 +6,7 @@ on:
     paths: 
       - paper/**
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "paper-rough-draft" ]
     paths:
       - paper/**
   workflow_dispatch:
