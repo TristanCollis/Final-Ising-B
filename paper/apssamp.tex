@@ -40,6 +40,7 @@
 %floatfix,
 ]{revtex4-2}
 
+\usepackage{ tipa }
 \usepackage{graphicx}% Include figure files
 \usepackage{dcolumn}% Align table columns on decimal point
 \usepackage{bm}% bold math
@@ -95,11 +96,25 @@ Introduction to project
 
 \section{\label{sec:level2}Ising Model}
 
-In this section, we provide an overview of the Ising model,a fundamental concept in statistical mechanics used to describe the behavior of magnetic systems.
+For this project, we focus on the 2D Ising model, which consists of a lattice of spins $\{+1, -1\}$ and is often used to approximate ferromagnetic materials. The behavior of the system is described by an energy function $E(\sigma)$, where $\sigma$ represents the configuration of spins. The energy function is defined as:
 
-For this project, we concentrate on the 2D Ising model, which comprises a lattice of spins ${+1, -1}$ and is commonly employed to approximate ferromagnetic materials. In this model, the energy function is typically defined such that aligned neighbors possess lower energy compared to opposing neighbors.
+\begin{equation}
+E(\sigma) = -J\sum_{\langle ij \rangle} \sigma_i\sigma_j - B\sum_{i \in \textturnv}\sigma_i
+\end{equation}
 
-One notable property stemming from this energy definition is that, due to spins tending to align with neighbors of the same orientation to minimize energy, the lattice tends to align with an external magnetic field at low temperatures. This behavior is a consequence of spins converging towards the lowest energy state, leading to an alignment with the external magnetic field.
+Here, $J$ denotes the coupling constant, $B$ represents the external magnetic field, and the terms $\sum_{\langle ij \rangle}$ and $\sum_{i \in \textturnv}$ represent summations over nearest neighbors and all spins, respectively. The symbol $\langle ij \rangle$ signifies pairs of adjacent lattice sites.
+
+The first term $-J\sum_{\langle ij \rangle} \sigma_i\sigma_j$ captures the interaction energy between neighboring spins, where aligned neighbors have lower energy than opposing neighbors. The second term $-B\sum_{i \in \textturnv}\sigma_i$ represents the interaction of spins with the external magnetic field.
+
+A significant consequence of this energy function is the tendency of the lattice to align with the external magnetic field at low temperatures, as spins converge towards the lowest energy state.
+
+Furthermore, the magnetization $M(\sigma)$ of the system, defined as the average spin per site, is given by:
+
+\begin{equation}
+M(\sigma) = \frac{1}{|\textturnv|} \sum_{i \in \textturnv} \sigma_i
+\end{equation}
+
+Here, $|\textturnv|$ represents the total number of lattice sites.
 
 Attach some snapshots of low temperature, negative magnetic field; low temperature, positive magnetic field.
 
