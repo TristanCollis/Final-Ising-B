@@ -124,32 +124,25 @@ Attach some snapshots of low temperature, negative magnetic field; low temperatu
 
 Monte Carlo methods describe a broad class of algorithms that attempt to 
 reduce operational complexity and computation time by replacing exhaustive 
-computations with random ones. In this project, instead of computing the full
-dynamics of the system, which would be intractible, we pick a random cell in 
-the lattice at each time step, and decide whether or not to flip it based on 
-some probability dependent in the projected change in energy, and the predefined 
-"temperature" of the system.  
+computations with random ones. In this project, instead of computing the full dynamics of the system, which would be intractible, we pick a random cell in the lattice at each time step, and decide whether or not to flip it based on some probability dependent in the projected change in energy, and the predefined "temperature" of the system.  
   
-A Markov Chain is a probabilistic state system in which each state has a defined 
-probability to transition to each other state at every time step. These states 
-are often visualized as nodes in a network, with each directed edge weighted according 
-to the probability that the state will move along that edge from its initial to terminal nodes.
-In computing, this is more often computed as a transition matrix that encodes the same information.  
+A Markov Chain is a probabilistic state system in which each state has a defined probability to transition to each other state at every time step. These states are often visualized as nodes in a network, with eachdirected edge weighted according to the probability that the state will move along that edge from its initial to terminal nodes. In computing, this is more often computed as a transition matrix that encodes the same information.  
   
-For our purposes, however, we do not necessarily know the full probability matrix, 
-as the phase space for this problem is intractible to solve completely. Instead, we 
-know the transition probability based on the state variables, and need to evolve the 
-system in time based on that. This is where Monte Carlo Markov Chains help. By stepping 
-around the phase space randomly, weighted according to known transition rules, 
-we can more efficiently explore the phase space of the system in an approximate manner.
+For our purposes, however, we do not necessarily know the full probability matrix, as the phase space for this problem is intractible to solve completely. Instead, we know the transition probability based on the state variables, and need to evolve the system in time based on that. This is where Monte Carlo Markov Chains help. By stepping around the phase space randomly, weighted according to known transition rules, we can more efficiently explore the phase space of the system in an approximate manner.
 
 \section{\label{sec:level1}Results and Discussion}
 \subsection{\label{sec:level2}Configuration and Burn-In}
 \subsection{\label{sec:level2}1D Scans of Magnetization vs Temperature}
 \subsection{\label{sec:level2}Phase Diagram, Metastable States, and Hysteresis}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{graph_0.png}
+    \caption{Phase Diagram}
+    \label{fig:enter-label}
+\end{figure}
 
-\section{\label{sec:level1}First-level heading:\protect\\ The line
-break was forced \lowercase{via} \textbackslash\textbackslash}
+
+
 
 This sample document demonstrates proper use of REV\TeX~4.2 (and
 \LaTeXe) in mansucripts prepared for submission to APS
