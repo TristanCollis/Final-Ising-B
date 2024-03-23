@@ -152,11 +152,11 @@ In the scenario where the first absolute difference yields a value greater than 
 \end{figure}
 
 One notable advantage of this algorithm is its reliability in yielding results, albeit with a caveat. In instances where the magnetization history exhibits significant noise, the error-based method often fails, defaulting instead to mean sampling. However, it's worth noting that this may not always produce accurate results.
+
 \subsection{\label{sec:level2}1D Scans of Magnetization vs Temperature}
+When plotting magnetization vs temperature for constant magnetic field (figure \ref{fig:1dscans,fixedB}), we can observe that when the magnetic field (\(B\)) is zero, the net magnetization undergoes a rather sudden transition to an all-random state. Conversely, if there is any non-zero \(B\) field, the transition is much slower, but the net magnetization eventually converges to around zero, albeit at a higher temperature. These transitions to an all-random state represent a second-order phase transition of the material.
 
-When plotting magnetization vs temperature for constant magnetic field (figure \ref{fig:1dscans,fixedB}), we see extreme results at low temperature, before results converge at high temperature when there is high disorder.  
-
-Plotting magnetization vs external field (figure \ref{fig:1dscans,fixedT}), we see a phase transition occurring at T=0 that gets smoothed out as T rises.
+Plotting magnetization vs external field for fixed temperature (figure \ref{fig:1dscans,fixedT}), we observed a discontinuity at about \(B=0\) for low temperatures, corresponding to a first-order phase transition. For higher temperatures, we noticed that the net magnetization flattens out and converges to around zero, regardless of the magnetic field.
 
 \begin{figure}
     \centering
