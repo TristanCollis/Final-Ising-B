@@ -40,7 +40,7 @@
 %floatfix,
 ]{revtex4-2}
 
-\usepackage{ tipa }
+\usepackage{tipa}
 \usepackage{graphicx}% Include figure files
 \usepackage{dcolumn}% Align table columns on decimal point
 \usepackage{bm}% bold math
@@ -96,31 +96,31 @@ use the optional argument of the \verb+\item+ command to give the category of ea
 
 Introduction to project 
 
-\section{\label{sec:level2}Ising Model}
+\subsection{\label{sec:level2}Ising Model}
 
 For this project, we focus on the 2D Ising model, which consists of a lattice of spins $\{+1, -1\}$ and is often used to approximate ferromagnetic materials. The behavior of the system is described by an energy function $E(\sigma)$, where $\sigma$ represents the configuration of spins. The energy function is defined as:
 
 \begin{equation}
-E(\sigma) = -J\sum_{\langle ij \rangle} \sigma_i\sigma_j - B\sum_{i \in \textturnv}\sigma_i
+E(\sigma) = -J\sum_{\langle ij \rangle} \sigma_i\sigma_j - B\sum_{i \in \Lambda}\sigma_i
 \end{equation}
 
-Here, $J$ denotes the coupling constant, $B$ represents the external magnetic field, and the terms $\sum_{\langle ij \rangle}$ and $\sum_{i \in \textturnv}$ represent summations over nearest neighbors and all spins, respectively. The symbol $\langle ij \rangle$ signifies pairs of adjacent lattice sites.
+Here, $J$ denotes the coupling constant, $B$ represents the external magnetic field, and the terms $\sum_{\langle ij \rangle}$ and $\sum_{i \in \Lambda}$ represent summations over nearest neighbors and all spins, respectively. The symbol $\langle ij \rangle$ signifies pairs of adjacent lattice sites.
 
-The first term $-J\sum_{\langle ij \rangle} \sigma_i\sigma_j$ captures the interaction energy between neighboring spins, where aligned neighbors have lower energy than opposing neighbors. The second term $-B\sum_{i \in \textturnv}\sigma_i$ represents the interaction of spins with the external magnetic field.
+The first term $-J\sum_{\langle ij \rangle} \sigma_i\sigma_j$ captures the interaction energy between neighboring spins, where aligned neighbors have lower energy than opposing neighbors. The second term $-B\sum_{i \in \Lambda}\sigma_i$ represents the interaction of spins with the external magnetic field.
 
 A significant consequence of this energy function is the tendency of the lattice to align with the external magnetic field at low temperatures, as spins converge towards the lowest energy state.
 
 Furthermore, the magnetization $M(\sigma)$ of the system, defined as the average spin per site, is given by:
 
 \begin{equation}
-M(\sigma) = \frac{1}{|\textturnv|} \sum_{i \in \textturnv} \sigma_i
+M(\sigma) = \frac{1}{|\Lambda|} \sum_{i \in \Lambda} \sigma_i
 \end{equation}
 
-Here, $|\textturnv|$ represents the total number of lattice sites.
+Here, $|\Lambda|$ represents the total number of lattice sites.
 
 Attach some snapshots of low temperature, negative magnetic field; low temperature, positive magnetic field.
 
-\section{\label{sec:level2}Monte Carlo Markov Chain}  
+\subsection{\label{sec:level2}Monte Carlo Markov Chain}  
 
 Monte Carlo methods describe a broad class of algorithms that attempt to 
 reduce operational complexity and computation time by replacing exhaustive 
@@ -142,6 +142,11 @@ know the transition probability based on the state variables, and need to evolve
 system in time based on that. This is where Monte Carlo Markov Chains help. By stepping 
 around the phase space randomly, weighted according to known transition rules, 
 we can more efficiently explore the phase space of the system in an approximate manner.
+
+\section{\label{sec:level1}Results and Discussion}
+\subsection{\label{sec:level2}Configuration and Burn-In}
+\subsection{\label{sec:level2}1D Scans of Magnetization vs Temperature}
+\subsection{\label{sec:level2}Phase Diagram, Metastable States, and Hysteresis}
 
 \section{\label{sec:level1}First-level heading:\protect\\ The line
 break was forced \lowercase{via} \textbackslash\textbackslash}
