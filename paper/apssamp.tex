@@ -133,15 +133,51 @@ For our purposes, however, we do not necessarily know the full probability matri
 \section{\label{sec:level1}Results and Discussion}
 \subsection{\label{sec:level2}Configuration and Burn-In}
 \subsection{\label{sec:level2}1D Scans of Magnetization vs Temperature}
-\subsection{\label{sec:level2}Phase Diagram, Metastable States, and Hysteresis}
+
+When plotting magnetization vs temperature for constant magnetic field (figure \ref{fig:1dscans,fixedB}), we see extreme results at low temperature, before results converge at high temperature when there is high disorder.  
+
+Plotting magnetization vs external field (figure \ref{fig:1dscans,fixedT}), we see a phase transition occurring at T=0 that gets smoothed out as T rises.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{1dscans,fixedB.png}
+    \caption{Enter Caption}
+    \label{fig:1dscans,fixedB}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{1dscans,fixedT.png}
+    \caption{Enter Caption}
+    \label{fig:1dscans,fixedT}
+\end{figure}
+
 \begin{figure}
     \centering
     \includegraphics[width=1\linewidth]{graph_0.png}
     \caption{Phase Diagram}
-    \label{fig:enter-label}
+    \label{fig:phase-diagram}
 \end{figure}
 
+\subsection{\label{sec:level2}Phase Diagram, Metastable States, and Hysteresis}
 
+The inherent stability of aligned spins gives rise to metastable states - states that are local potential minima (resistant to perturbation and thus stable), but not global minima (i.e. not the least possible energy). Here, if a low-temperature lattice begins in an all-up or all-down state, it is able to resist an external field in the opposite direction for some time, before eventually becoming overpowered by a strong-enough field. 
+This dependence upon the initial state is called hysteresis, and can give rise to lattices that have a sort of "memory" of their recent states. Systems that exhibit hysteresis are hard to solve analytically due to this dependence of the current state on prior states.
+We have graphed some of these hysteresis curves, where the phase transition from down to up or up to down spin depends on which way the aligned spins began in (figures \ref{fig:hysteresis_spin_down} and \ref{fig:hysteresis_spin_up}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{hysteresis_spin_down.png}
+    \caption{Enter Caption}
+    \label{fig:hysteresis_spin_down}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{hysteresis_spin_up.png}
+    \caption{Enter Caption}
+    \label{fig:hysteresis_spin_up}
+\end{figure}
 
 
 This sample document demonstrates proper use of REV\TeX~4.2 (and
