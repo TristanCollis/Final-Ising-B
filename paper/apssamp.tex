@@ -199,6 +199,19 @@ We have graphed some of these hysteresis curves, where the phase transition from
     \label{fig:hysteresis_spin_up}
 \end{figure}
 
+\section{\label{sec:level1}Profiling and Optimization}
+To make the code run in a reasonable amount of time, we used a combination of high code separation, Numba, and Scalene.
+In general, to make the most use out of the tools we had, we used a functional style of programming, and separated code functionality as far as we could, trying as much as possible to ensure each function had as few responsibilities as possible (preferably exactly 1). This way, when we optimized, we could fast-track development by limiting Numba applications only the code most critical to performance, reducing the need to untangle the strict typing and compilation requirements to get Numba working on a larger scale. It also helped us to profile code, as while the tool we used, Scalene, can profile individual lines of code, it is much better at profiling entire functions.
+Numba is a set of C libraries with a front-end accessible via Python. This allows developers to use highly performant C code from within much easier-to-use Python. It works best when breaking down loops and iterations, as well as large matrix operations, which Python struggles to do at speed by itself.
+Lastly, we used Scalene, a profiling tool that tracks time spent per line and per function in the code, including the proportions of time spent by the processor running in Python, native bytecode, and C. It also tracks memory and GPU usage.
+With the combination of these three, we were able to track down the fact that our performance bottleneck lay in the $\Delta E$ calculation during simulation steps when determining whether or not to flip a cell's spin. Figure \ref{fig:Scalene-Screenshot} is a screen capture of our code's performance running a low-resolution pass.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Scalene-Screenshot.png}
+    \caption{Scalene profile of our simulation}
+    \label{fig:Scalene-Screenshot}
+\end{figure}
 
 This sample document demonstrates proper use of REV\TeX~4.2 (and
 \LaTeXe) in mansucripts prepared for submission to APS
