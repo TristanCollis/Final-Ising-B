@@ -132,6 +132,23 @@ For our purposes, however, we do not necessarily know the full probability matri
 
 \section{\label{sec:level1}Results and Discussion}
 \subsection{\label{sec:level2}Configuration and Burn-In}
+We've developed an algorithm for determining the appropriate number of burn-in steps for a given Ising model simulation. The primary objective of this algorithm is computational efficiency.
+If the absolute difference between these two values falls below the error threshold, we backtrack by 25\% of the array's length. We then compute the absolute difference of this value with \(h1\) and compare it against the error. If it exceeds the error, we move forward by 12.5\%; conversely, if it falls below the error, we backtrack by 12.5\%. It's worth noting that the percentage values we use for moving back and forth are based on the inverse powers of two, ensuring a geometrically decreasing step size. For instance, we move back by 50\% (\(1/2\)) of the array's length, then by 25\% (\(1/4\)), and subsequently by 12.5\% (\(1/8\)), and so forth. This geometric progression allows for a systematic exploration of the magnetization history, optimizing the search for the appropriate burn-in steps.
+
+In the scenario where the first absolute difference yields a value greater than the error, we transition to a mean sampling method. Here, we randomly sample a subset of points (typically ranging from 5 to 20) from the magnetization history. Subsequently, we compute the mean of this sample and conduct a linear search from the beginning of the magnetization history. We continue this search until we locate a value below or above the mean, depending on whether the history is converging downwards or upwards.
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{burnin,upLattice.png}
+    \caption{Phase Diagram}
+    \label{fig:enter-label}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{burin,randomLattice.png}
+    \caption{Phase Diagram}
+    \label{fig:enter-label}
+\end{figure}
+One notable advantage of this algorithm is its reliability in yielding results, albeit with a caveat. In instances where the magnetization history exhibits significant noise, the error-based method often fails, defaulting instead to mean sampling. However, it's worth noting that this may not always produce accurate results.
 \subsection{\label{sec:level2}1D Scans of Magnetization vs Temperature}
 
 When plotting magnetization vs temperature for constant magnetic field (figure \ref{fig:1dscans,fixedB}), we see extreme results at low temperature, before results converge at high temperature when there is high disorder.  
